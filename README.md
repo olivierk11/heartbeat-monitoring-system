@@ -4,7 +4,7 @@ A real-time data pipeline that simulates heart-rate monitors for multiple custom
 readings through **Apache Kafka**, validates and classifies them in a **Python consumer**, and stores
 them in **PostgreSQL** for historical querying and live dashboards.
 
-![Data flow diagram](docs/architecture.png)
+![Data flow diagram](docs/architecture.drawio.pdf)
 
 ---
 
