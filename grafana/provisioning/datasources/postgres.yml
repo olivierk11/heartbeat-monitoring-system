@@ -1,0 +1,16 @@
+apiVersion: 1
+datasources:
+  - name: HeartbeatDB
+    uid: heartbeat-pg
+    type: grafana-postgresql-datasource
+    access: proxy
+    url: postgres:5432
+    user: heartbeat
+    isDefault: true
+    jsonData:
+      database: heartbeat
+      sslmode: disable
+      postgresVersion: 1600
+      timescaledb: false
+    secureJsonData:
+      password: heartbeat
