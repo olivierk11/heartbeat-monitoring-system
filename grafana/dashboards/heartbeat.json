@@ -1,0 +1,54 @@
+{
+  "title": "Customer Heart Beat Monitor",
+  "uid": "heartbeat-monitor",
+  "schemaVersion": 39,
+  "refresh": "5s",
+  "time": { "from": "now-15m", "to": "now" },
+  "panels": [
+    {
+      "id": 1, "type": "timeseries", "title": "Heart rate by customer (bpm)",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 10 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "heartbeat-pg" },
+      "targets": [{
+        "refId": "A", "editorMode": "code", "rawQuery": true, "format": "time_series",
+        "rawSql": "SELECT reading_time AS time, customer_id AS metric, heart_rate AS value FROM heartbeat_readings WHERE $__timeFilter(reading_time) ORDER BY 1"
+      }]
+    },
+    {
+      "id": 2, "type": "stat", "title": "Readings in range",
+      "gridPos": { "x": 0, "y": 10, "w": 8, "h": 5 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "heartbeat-pg" },
+      "targets": [{
+        "refId": "A", "editorMode": "code", "rawQuery": true, "format": "table",
+        "rawSql": "SELECT COUNT(*) AS readings FROM heartbeat_readings WHERE $__timeFilter(reading_time)"
+      }]
+    },
+    {
+      "id": 3, "type": "stat", "title": "Anomalies in range",
+      "gridPos": { "x": 8, "y": 10, "w": 8, "h": 5 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "heartbeat-pg" },
+      "targets": [{
+        "refId": "A", "editorMode": "code", "rawQuery": true, "format": "table",
+        "rawSql": "SELECT COUNT(*) AS anomalies FROM heartbeat_readings WHERE status <> 'normal' AND $__timeFilter(reading_time)"
+      }]
+    },
+    {
+      "id": 4, "type": "stat", "title": "Rejected messages in range",
+      "gridPos": { "x": 16, "y": 10, "w": 8, "h": 5 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "heartbeat-pg" },
+      "targets": [{
+        "refId": "A", "editorMode": "code", "rawQuery": true, "format": "table",
+        "rawSql": "SELECT COUNT(*) AS rejected FROM invalid_readings WHERE $__timeFilter(received_at)"
+      }]
+    },
+    {
+      "id": 5, "type": "table", "title": "Latest anomalies",
+      "gridPos": { "x": 0, "y": 15, "w": 24, "h": 8 },
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "heartbeat-pg" },
+      "targets": [{
+        "refId": "A", "editorMode": "code", "rawQuery": true, "format": "table",
+        "rawSql": "SELECT reading_time, customer_id, heart_rate, status FROM heartbeat_readings WHERE status <> 'normal' AND $__timeFilter(reading_time) ORDER BY reading_time DESC LIMIT 50"
+      }]
+    }
+  ]
+}
